@@ -47,7 +47,7 @@ export async function verifyEmail(token: string) {
       email: string;
       role: string;
       status: string;
-      full_name?: string;
+      full_name: string;
     };
   }>(`/auth/verify-email?token=${encodeURIComponent(token)}`, {
     method: "GET",

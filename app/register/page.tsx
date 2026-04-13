@@ -1,13 +1,76 @@
+"use client";
+
 import Navbar from "@/components/shared/Navbar";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { registerUser } from "@/lib/auth";
 
 export default function RegisterPage() {
+  const router = useRouter();
+
+  const [role, setRole] = useState<"eco_traveler" | "project" | "guide">("eco_traveler");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+
+    if (!fullName.trim()) {
+      setError("Le nom complet est requis.");
+      return;
+    }
+
+    if (!email.trim()) {
+      setError("L'email est requis.");
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Le mot de passe est requis.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+
+    if (!termsAccepted) {
+      setError("Vous devez accepter les conditions.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const result = await registerUser({
+        full_name: fullName,
+        email,
+        password,
+        role,
+      });
+
+      router.push("/check-email");
+    } catch (err: any) {
+      setError(err.message || "Erreur lors de l'inscription.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="bg-background text-on-background min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
       {/* TopAppBar */}
       <Navbar variant="auth" currentPage="register" backHref="/" />
-        
-      
+
+
 
       {/* Main Content */}
       <main className="flex-grow flex items-center justify-center pt-24 pb-12 px-4 relative overflow-hidden">
@@ -66,7 +129,7 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               {/* Role Selection */}
               <div className="space-y-3">
                 <label className="text-sm font-bold text-slate-700 block ml-1">
@@ -76,7 +139,8 @@ export default function RegisterPage() {
                 <div className="grid gap-3 grid-cols-3">
                   <label className="relative flex flex-col items-center p-3 rounded-xl border-2 border-slate-100 bg-surface-container-low cursor-pointer hover:border-primary/30 transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary/5">
                     <input
-                      defaultChecked
+                      checked={role === "eco_traveler"}
+                      onChange={() => setRole("eco_traveler")}
                       className="sr-only"
                       name="role"
                       type="radio"
@@ -91,7 +155,12 @@ export default function RegisterPage() {
                   </label>
 
                   <label className="relative flex flex-col items-center p-3 rounded-xl border-2 border-slate-100 bg-surface-container-low cursor-pointer hover:border-primary/30 transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                    <input className="sr-only" name="role" type="radio" value="project" />
+                    <input checked={role === "project"}
+                      onChange={() => setRole("project")}
+                      className="sr-only"
+                      name="role"
+                      type="radio"
+                      value="project" />
                     <span className="material-symbols-outlined text-2xl text-slate-400 group-hover:text-primary transition-colors mb-1">
                       potted_plant
                     </span>
@@ -101,7 +170,12 @@ export default function RegisterPage() {
                   </label>
 
                   <label className="relative flex flex-col items-center p-3 rounded-xl border-2 border-slate-100 bg-surface-container-low cursor-pointer hover:border-primary/30 transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                    <input className="sr-only" name="role" type="radio" value="guide" />
+                    <input checked={role === "guide"}
+                      onChange={() => setRole("guide")}
+                      className="sr-only"
+                      name="role"
+                      type="radio"
+                      value="guide" />
                     <span className="material-symbols-outlined text-2xl text-slate-400 group-hover:text-primary transition-colors mb-1">
                       explore
                     </span>
@@ -126,6 +200,8 @@ export default function RegisterPage() {
                     </div>
                     <input
                       className="w-full pl-11 pr-4 py-3.5 bg-surface-container border-none rounded-xl focus:ring-2 focus:ring-primary text-slate-900 placeholder:text-slate-400 font-medium transition-all"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
                       id="full_name"
                       name="full_name"
                       placeholder="Jean Dupont"
@@ -146,6 +222,8 @@ export default function RegisterPage() {
                     </div>
                     <input
                       className="w-full pl-11 pr-4 py-3.5 bg-surface-container border-none rounded-xl focus:ring-2 focus:ring-primary text-slate-900 placeholder:text-slate-400 font-medium transition-all"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       id="email"
                       name="email"
                       placeholder="nom@exemple.com"
@@ -167,6 +245,8 @@ export default function RegisterPage() {
                       </div>
                       <input
                         className="w-full pl-11 pr-4 py-3.5 bg-surface-container border-none rounded-xl focus:ring-2 focus:ring-primary text-slate-900 placeholder:text-slate-400 font-medium transition-all"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         id="password"
                         name="password"
                         placeholder="••••••••"
@@ -187,6 +267,8 @@ export default function RegisterPage() {
                       </div>
                       <input
                         className="w-full pl-11 pr-4 py-3.5 bg-surface-container border-none rounded-xl focus:ring-2 focus:ring-primary text-slate-900 placeholder:text-slate-400 font-medium transition-all"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         id="confirm_password"
                         name="confirm_password"
                         placeholder="••••••••"
@@ -201,6 +283,8 @@ export default function RegisterPage() {
               <div className="flex items-start gap-3 ml-1">
                 <input
                   className="mt-1 rounded border-slate-300 text-primary focus:ring-primary w-4 h-4 transition-colors"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
                   id="terms"
                   type="checkbox"
                 />
@@ -216,12 +300,15 @@ export default function RegisterPage() {
                   .
                 </label>
               </div>
-
+              {error && (
+                <p className="text-sm font-semibold text-red-600">{error}</p>
+              )}
               <button
-                className="w-full py-4 bg-primary text-black font-extrabold text-lg rounded-xl shadow-lg shadow-primary/30 hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 bg-primary text-black font-extrabold text-lg rounded-xl shadow-lg shadow-primary/30 hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                 type="submit"
+                disabled={loading}
               >
-                Créer un compte
+                {loading ? "Chargement..." : "Créer un compte"}
                 <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             </form>

@@ -1,7 +1,39 @@
+"use client";
+
 import Navbar from "@/components/shared/Navbar";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { loginUser } from "@/lib/auth";
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+
+    try {
+      setLoading(true);
+
+      const result = await loginUser({ email, password });
+
+      localStorage.setItem("access_token", result.access_token);
+      localStorage.setItem("refresh_token", result.refresh_token);
+      localStorage.setItem("user", JSON.stringify(result.user));
+
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Erreur lors de la connexion.");
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <div className="bg-background text-on-surface min-h-screen flex flex-col">
       {/* TopAppBar */}
@@ -60,7 +92,7 @@ export default function LoginPage() {
                 </p>
               </div>
 
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                   <label
                     className="block text-sm font-bold text-on-surface-variant ml-1"
@@ -74,6 +106,8 @@ export default function LoginPage() {
                     </span>
                     <input
                       className="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary transition-all font-medium text-on-surface placeholder:text-outline/60"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       id="email"
                       placeholder="nom@exemple.com"
                       type="email"
@@ -103,18 +137,25 @@ export default function LoginPage() {
                     </span>
                     <input
                       className="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary transition-all font-medium text-on-surface placeholder:text-outline/60"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       id="password"
                       placeholder="••••••••"
                       type="password"
                     />
                   </div>
+
+                  {error && (
+                    <p className="text-sm font-semibold text-red-600">{error}</p>
+                  )}
                 </div>
 
                 <button
-                  className="w-full py-4 bg-primary text-slate-900 rounded-xl font-extrabold text-lg shadow-lg shadow-primary/30 hover:-translate-y-0.5 active:scale-95 transition-all flex justify-center items-center gap-2"
+                  disabled={loading}
+                  className="w-full py-4 bg-primary text-slate-900 rounded-xl font-extrabold text-lg shadow-lg shadow-primary/30 hover:-translate-y-0.5 active:scale-95 transition-all flex justify-center items-center gap-2 disabled:opacity-60"
                   type="submit"
                 >
-                  Se connecter
+                  {loading ? "Chargement..." : "Se connecter"}
                 </button>
               </form>
 
