@@ -15,7 +15,7 @@ export type LoginPayload = {
 export async function registerUser(payload: RegisterPayload) {
   return apiFetch<{
     message: string;
-    verification_token: string;
+  
   }>("/auth/register", {
     method: "POST",
     body: JSON.stringify(payload),
@@ -39,20 +39,7 @@ export async function loginUser(payload: LoginPayload) {
   });
 }
 
-export async function verifyEmail(token: string) {
-  return apiFetch<{
-    message: string;
-    user: {
-      id: string;
-      email: string;
-      role: string;
-      status: string;
-      full_name: string;
-    };
-  }>(`/auth/verify-email?token=${encodeURIComponent(token)}`, {
-    method: "GET",
-  });
-}
+
 
 export async function refreshToken(refresh_token: string) {
   return apiFetch<{
