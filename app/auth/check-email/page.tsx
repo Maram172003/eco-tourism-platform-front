@@ -19,7 +19,7 @@ export default function CheckEmailPage() {
         </p>
 
         <Link
-          href="/login"
+          href="/auth/login"
           className="inline-block px-5 py-3 rounded-xl bg-primary text-black font-bold"
         >
           Retour à la connexion

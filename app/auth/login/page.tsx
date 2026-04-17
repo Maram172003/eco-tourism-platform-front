@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/components/shared/Navbar";
+import Navbar from "@/components/home/Navbar";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -27,7 +27,7 @@ export default function LoginPage() {
       localStorage.setItem("refresh_token", result.refresh_token);
       localStorage.setItem("user", JSON.stringify(result.user));
 
-      router.push("/dashboard");
+      router.push(result.dashboard);
     } catch (err: any) {
       setError(err.message || "Erreur lors de la connexion.");
     } finally {
@@ -199,7 +199,7 @@ export default function LoginPage() {
               <p className="mt-10 text-center text-sm font-medium text-on-surface-variant">
                 Nouveau sur Éco-Voyage ?
                 <Link
-                  href="/register"
+                  href="/auth/register"
                   className="text-primary font-bold hover:underline ml-1"
                 >
                   Créer un compte

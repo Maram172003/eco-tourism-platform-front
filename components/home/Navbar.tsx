@@ -79,7 +79,7 @@ export default function Navbar({
           )}
 
           <Link
-            href="/login"
+            href="/auth/login"
             className={`hidden sm:flex h-11 items-center justify-center rounded-xl px-5 text-sm font-bold transition-all ${
               currentPage === "login"
                 ? "bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100"
@@ -90,7 +90,7 @@ export default function Navbar({
           </Link>
 
           <Link
-            href="/register"
+            href="/auth/register"
             className={`flex h-11 items-center justify-center rounded-xl px-6 text-sm font-bold transition-all ${
               currentPage === "register"
                 ? "bg-primary text-slate-900 shadow-lg shadow-primary/20"

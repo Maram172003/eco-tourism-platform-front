@@ -26,6 +26,7 @@ export async function loginUser(payload: LoginPayload) {
   return apiFetch<{
     access_token: string;
     refresh_token: string;
+    dashboard: string;
     user: {
       id: string;
       email: string;

@@ -2,7 +2,7 @@ import FeaturedExperiences from "@/components/home/FeaturedExperiences";
 import Footer from "@/components/home/Footer";
 import Hero from "@/components/home/Hero";
 import HowItWorks from "@/components/home/HowItWorks";
-import Navbar from "@/components/shared/Navbar";
+import Navbar from "@/components/home/Navbar";
 import Newsletter from "@/components/home/Newsletter";
 
 

@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/components/shared/Navbar";
+import Navbar from "@/components/home/Navbar";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -57,7 +57,7 @@ export default function RegisterPage() {
         role,
       });
 
-      router.push("/check-email");
+      router.push("/auth/check-email");
     } catch (err: any) {
       setError(err.message || "Erreur lors de l'inscription.");
     } finally {
